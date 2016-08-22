@@ -33,7 +33,7 @@ if __name__=="__main__":
     for member in filenames:
         print member
         fin = inputfolder+'/'+member
-        fout = sys.argv[2]
-        filenamefile = sys.argv[3]
+        fout = 'Data/'+sys.argv[2]
+        filenamefile = 'Data/'+sys.argv[3]
         resize_file(fin, fout, (10, 10), filenamefile)
 	
