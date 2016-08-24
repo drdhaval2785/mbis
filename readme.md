@@ -37,3 +37,16 @@ Images
 8. Keep on pushing enter whenever asked.
 9. The console will show you the training / testing accuracy and also list of false positive / false negative files (places where the code failed).
 10. Examine the image and try to figure out the cause of error.
+
+# Preprocessing
+1. `resize.py` does the preprocessing.
+2. Images are usually of different sizes. Therefore, it is necessary that they are converted to uniform data for machine learning.
+3. We resize every image into 10X10 pixel size (i.e. make it very low resolution).
+4. Every pixel has 4 features CYMK which take values from 0-255 (i.e. 256 possible values).
+5. Therefore our input data has 10X10X4 = 400 input features.
+6. These 400 input features are written in a CSV file. One line represents one image file.
+7. All files from the input folders are converted to the corresponding CSV files by this process.
+8. The file names are also stored as txt files, for later retrieval (which line of data belongs to which file).
+9. After preprocessing, we don't use images any more. We do our training etc with the CSV files only.
+
+
