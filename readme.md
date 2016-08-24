@@ -72,6 +72,6 @@ Images
 1. We train the neural network with the training data.
 2. We display training classification accuracy.
 3. We display test classification accuracy.
-4. If the accuracy on test classification is 100% (or greater than some threshold), the parameters are stored in hottiedata/input/learntparameters.mat.
+4. If the accuracy on test classification is 100% (or greater than some user defined threshold), the parameters are stored in hottiedata/input/learntparameters.mat.
 5. This way we can store the neural network we found OK, and then apply it to some other test cases too.
 
