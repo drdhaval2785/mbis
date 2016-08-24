@@ -2,8 +2,8 @@
 To train a neural network to segregate good images and bad images.
 
 # Programs used
-python 2.7.9
-octave 4.0.3
+python >= 2.7.9 https://www.python.org/downloads/
+octave 4.0.3 - https://www.gnu.org/software/octave/download.html
 
 # Python libraries used
 PIL - pip install pillow
