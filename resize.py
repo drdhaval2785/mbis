@@ -35,7 +35,7 @@ if __name__=="__main__":
         print counter, member
         counter += 1
         fin = inputfolder+'/'+member
-        fout = 'Data/'+sys.argv[2]
-        filenamefile = 'Data/'+sys.argv[3]
+        fout = 'hottiedata/input/'+sys.argv[2]
+        filenamefile = 'hottiedata/input/'+sys.argv[3]
         resize_file(fin, fout, (10, 10), filenamefile)
 	
