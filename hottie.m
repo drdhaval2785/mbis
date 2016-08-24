@@ -10,17 +10,23 @@ num_labels = 2;          % 2 labels, from 1 to 2
 %% =========== Part 1: Loading and Visualizing Data =============
 
 % Load Training Data
-fprintf('Loading and Visualizing Data ...\n')
+fprintf('Loading and Normalizing Data ...\n')
 
 %Normalize raining data
-X2 = csvread('hottiedata/input/trues.csv');
-X2 = rgbnormalize(X2);
-X1 = csvread('hottiedata/input/falses.csv');
-X1 = rgbnormalize(X1);
-X = [X1;X2];
-y = [ones(size(X1,1),1).*2;ones(size(X2,1),1)];
-m = size(X, 1);
-
+if exist('hottiedata/input/normalized/testdata.mat') == 2,
+	fprintf('Loading normalized data from hottiedata/input/normalized/testdata.mat.\nIf you want to test on new data, delete this file and rerun the code.\n')
+	load('hottiedata/input/normalized/testdata.mat');
+else
+	fprintf('Normalizing the test data and storing in hottiedata/input/normalized/testdata.mat');
+	X2 = csvread('hottiedata/input/trues.csv');
+	X2 = rgbnormalize(X2);
+	X1 = csvread('hottiedata/input/falses.csv');
+	X1 = rgbnormalize(X1);
+	X = [X1;X2];
+	y = [ones(size(X1,1),1).*2;ones(size(X2,1),1)];
+	m = size(X, 1);
+	save('hottiedata/input/normalized/testdata.mat','X','y');
+end
 fprintf('Program paused. Press enter to continue.\n');
 pause;
 
@@ -85,12 +91,12 @@ pause;
 %  displaying the hidden units to see what features they are capturing in 
 %  the data.
 
-fprintf('\nVisualizing Neural Network... \n')
+%fprintf('\nVisualizing Neural Network... \n')
 
-displayData(Theta1(:, 2:end));
+%displayData(Theta1(:, 2:end));
 
-fprintf('\nProgram paused. Press enter to continue.\n');
-pause;
+%fprintf('\nProgram paused. Press enter to continue.\n');
+%pause;
 
 %% ================= Part 6: Implement Predict =================
 
@@ -117,4 +123,24 @@ fprintf('\nTesting Set Accuracy: %f\n', trainingaccuracy);
 if trainingaccuracy == 100
 	save('hottiedata/input/learntweights.mat','Theta1','Theta2');
 end
+
+% Displaying false positive files
+falsepositive_file = fopen('hottiedata/input/testminus.txt');
+number_of_lines = fskipl(falsepositive_file, Inf);
+frewind(falsepositive_file);
+falseposcells = cell(number_of_lines, 1);
+for i = 1:number_of_lines
+    falseposcells{i} = fscanf(falsepositive_file, '%s', 1);
+end
+falsepositivefile = falseposcells(falsepositives)
+
+% Displaying false negative files
+falsenegative_file = fopen('hottiedata/input/testplus.txt');
+number_of_lines = fskipl(falsenegative_file, Inf);
+frewind(falsenegative_file);
+falsenegcells = cell(number_of_lines, 1);
+for i = 1:number_of_lines
+    falsenegcells{i} = fscanf(falsenegative_file, '%s', 1);
+end
+falsenegativefile = falsenegcells(falsenegatives)
 
