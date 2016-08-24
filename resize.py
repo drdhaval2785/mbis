@@ -30,8 +30,10 @@ def resize_file(in_file, out_file, size, filenamefile):
 if __name__=="__main__":
     inputfolder = sys.argv[1]
     filenames = findfilenames(inputfolder)
+    counter = 1
     for member in filenames:
-        print member
+        print counter, member
+        counter += 1
         fin = inputfolder+'/'+member
         fout = 'Data/'+sys.argv[2]
         filenamefile = 'Data/'+sys.argv[3]
