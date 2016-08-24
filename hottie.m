@@ -17,7 +17,7 @@ if exist('hottiedata/input/normalized/testdata.mat') == 2,
 	fprintf('Loading normalized data from hottiedata/input/normalized/testdata.mat.\nIf you want to test on new data, delete this file and rerun the code.\n')
 	load('hottiedata/input/normalized/testdata.mat');
 else
-	fprintf('Normalizing the test data and storing in hottiedata/input/normalized/testdata.mat');
+	fprintf('Normalizing the training data and storing in hottiedata/input/normalized/traindata.mat');
 	X2 = csvread('hottiedata/input/trues.csv');
 	X2 = rgbnormalize(X2);
 	X1 = csvread('hottiedata/input/falses.csv');
@@ -25,16 +25,21 @@ else
 	X = [X1;X2];
 	y = [ones(size(X1,1),1).*2;ones(size(X2,1),1)];
 	m = size(X, 1);
-	save('hottiedata/input/normalized/testdata.mat','X','y');
+	save('hottiedata/input/normalized/traindata.mat','X','y');
 end
 fprintf('Program paused. Press enter to continue.\n');
 pause;
 
+testX2 = csvread('hottiedata/input/testpositives.csv');
+testX2 = rgbnormalize(testX2);
+testX1 = csvread('hottiedata/input/testnegatives.csv');
+testX1 = rgbnormalize(testX1);
+testX = [testX1;testX2];
+testy = [ones(size(testX1,1),1).*2;ones(size(testX2,1),1)];
 
 %% ================ Part 2: Loading Parameters ================
 
 % Load the weights into variables Theta1 and Theta2
-num_labels = 2;
 if exist('hottiedata/input/learntweights.mat') == 2,
 	fprintf("Loading the previously learnt NN parameters from hottiedata/input/learntweights.mat");
 	load('hottiedata/input/learntweights.mat')
@@ -44,6 +49,10 @@ else
 end
 % Unroll parameters 
 nn_params = [Theta1(:) ; Theta2(:)];
+
+% Without learning, classification accuracy
+testpredwithoutlearning = predict(Theta1, Theta2, testX);
+fprintf('\nTest Set Identification from previously learnt parameters: %d / %d\n', sum(double(testpredwithoutlearning==testy)), size(testy,1));
 
 %% ================ Part 3: Initializing Pameters ================
 
@@ -102,13 +111,6 @@ pause;
 
 pred = predict(Theta1, Theta2, X);
 fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
-
-testX2 = csvread('hottiedata/input/testpositives.csv');
-testX2 = rgbnormalize(testX2);
-testX1 = csvread('hottiedata/input/testnegatives.csv');
-testX1 = rgbnormalize(testX1);
-testX = [testX1;testX2];
-testy = [ones(size(testX1,1),1).*2;ones(size(testX2,1),1)];
 
 testpred = predict(Theta1, Theta2, testX);
 fprintf('\nTest Set Identification: %d / %d\n', sum(double(testpred==testy)), size(testy,1));

@@ -27,7 +27,7 @@ Images
 			Here you will put your 'Bad' test images for testing the neural network on unseen images.
 
 # Steps
-1. Put your images in the Images folder as shown above.
+1. Put your images in the Images folder as shown in the `Images` folder description. The description is self explanatory.
 2. `cd path/to/this/folder'
 3. Run `sh runcode.sh` from commandline.
 4. This will generate all the text files / CSV files in hottiedata folder. (Extracted images and put their crux data in CSV / txt).
@@ -49,4 +49,29 @@ Images
 8. The file names are also stored as txt files, for later retrieval (which line of data belongs to which file).
 9. After preprocessing, we don't use images any more. We do our training etc with the CSV files only.
 
+# Normalization
+1. As mentoned in preprocessing section, our data has values from 0-255, and a total of 400 columns for each image.
+2. If we keep the numbers as they are, it would be difficult to train neural networks. Therefore, we need to normalize data.
+3. Python can normalize, but as the data size is higher, a Linear Algebra program like octave does it faster. So I have chosen octave to do this.
+3. We take average `mean` for each column and normalize according to the following formula `(observation-mean)/256`. Note that mean varies for each column.
+4. Thus, each value is converted to (-1,1) range.
+5. If the input images are not changed, the normalized values would also not change. Therefore, we have stored the normalized data in hottiedata/input/normalized/traindata.mat.
+6. This will ensure that the data is loaded directly from this file as long as there is such a file.
+7. This will help us run the octave code for training neural network a bit faster.
+8. If you change the images, please delete the traindata.mat file.
+9. Code is resilient enough and will regenerate a new testdata.mat with the new images you have put in folders.
+
+# Neural Network Parameters
+1. Input layer - 400 (Input features of pixels)
+2. Hidden layer - 50
+3. Output layer - 2 (Yes / No)
+4. Iterations - 100
+5. lambda - 1
+
+# Training Neural Network
+1. We train the neural network with the training data.
+2. We display training classification accuracy.
+3. We display test classification accuracy.
+4. If the accuracy on test classification is 100% (or greater than some threshold), the parameters are stored in hottiedata/input/learntparameters.mat.
+5. This way we can store the neural network we found OK, and then apply it to some other test cases too.
 
