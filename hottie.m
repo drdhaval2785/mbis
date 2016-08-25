@@ -3,9 +3,10 @@ clear ; close all; clc
 
 %% Setup the parameters you will use for this exercise
 input_layer_size  = 400;  % 20x20 Input Images of Digits
-hidden_layer_size = 50;   % 50 hidden units
+hidden_layer_size = 10;   % 50 hidden units
 num_labels = 2;          % 2 labels, from 1 to 2   
                           % (note that we have mapped "0" to label 2)
+threshold = 80; % Can be 95 / 99 for 95%, 99% respectively.
 
 %% =========== Part 1: Loading and Visualizing Data =============
 
@@ -13,9 +14,9 @@ num_labels = 2;          % 2 labels, from 1 to 2
 fprintf('Loading and Normalizing Data ...\n')
 
 %Normalize raining data
-if exist('hottiedata/input/normalized/testdata.mat') == 2,
-	fprintf('Loading normalized data from hottiedata/input/normalized/testdata.mat.\nIf you want to test on new data, delete this file and rerun the code.\n')
-	load('hottiedata/input/normalized/testdata.mat');
+if exist('hottiedata/input/normalized/traindata.mat') == 2,
+	fprintf('Loading normalized data from hottiedata/input/normalized/traindata.mat.\nIf you want to test on new data, delete this file and rerun the code.\n')
+	load('hottiedata/input/normalized/traindata.mat');
 else
 	fprintf('Normalizing the training data and storing in hottiedata/input/normalized/traindata.mat');
 	X2 = csvread('hottiedata/input/trues.csv');
@@ -24,18 +25,26 @@ else
 	X1 = rgbnormalize(X1);
 	X = [X1;X2];
 	y = [ones(size(X1,1),1).*2;ones(size(X2,1),1)];
+	combo = [X y];
+	combo = combo(randperm(size(combo,1)),:);
+	X = combo(:,1:input_layer_size);
+	y = combo(:,end);
 	m = size(X, 1);
-	save('hottiedata/input/normalized/traindata.mat','X','y');
+	testX2 = csvread('hottiedata/input/testpositives.csv');
+	testX2 = rgbnormalize(testX2);
+	testX1 = csvread('hottiedata/input/testnegatives.csv');
+	testX1 = rgbnormalize(testX1);
+	testX = [testX1;testX2];
+	testy = [ones(size(testX1,1),1).*2;ones(size(testX2,1),1)];
+	combo1 = [testX testy];
+	combo1 = combo1(randperm(size(combo1,1)),:);
+	testX = combo1(:,1:input_layer_size);
+	testy = combo1(:,end);
+	testm = size(testX1,1);
+	save('hottiedata/input/normalized/traindata.mat','X','y','m','testX','testy','testm');
 end
 fprintf('Program paused. Press enter to continue.\n');
 pause;
-
-testX2 = csvread('hottiedata/input/testpositives.csv');
-testX2 = rgbnormalize(testX2);
-testX1 = csvread('hottiedata/input/testnegatives.csv');
-testX1 = rgbnormalize(testX1);
-testX = [testX1;testX2];
-testy = [ones(size(testX1,1),1).*2;ones(size(testX2,1),1)];
 
 %% ================ Part 2: Loading Parameters ================
 
@@ -43,26 +52,18 @@ testy = [ones(size(testX1,1),1).*2;ones(size(testX2,1),1)];
 if exist('hottiedata/input/learntweights.mat') == 2,
 	fprintf("Loading the previously learnt NN parameters from hottiedata/input/learntweights.mat");
 	load('hottiedata/input/learntweights.mat')
+	initial_Theta1 = Theta1;
+	initial_Theta2 = Theta2;
 else
-	Theta1 = randInitializeWeights(input_layer_size,hidden_layer_size);
-	Theta2 = randInitializeWeights(hidden_layer_size,num_labels);
+	initial_Theta1 = randInitializeWeights(input_layer_size,hidden_layer_size);
+	initial_Theta2 = randInitializeWeights(hidden_layer_size,num_labels);
 end
 % Unroll parameters 
-nn_params = [Theta1(:) ; Theta2(:)];
+initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:)];
 
 % Without learning, classification accuracy
-testpredwithoutlearning = predict(Theta1, Theta2, testX);
+testpredwithoutlearning = predict(initial_Theta1, initial_Theta2, testX);
 fprintf('\nTest Set Identification from previously learnt parameters: %d / %d\n', sum(double(testpredwithoutlearning==testy)), size(testy,1));
-
-%% ================ Part 3: Initializing Pameters ================
-
-fprintf('\nInitializing Neural Network Parameters ...\n')
-
-initial_Theta1 = randInitializeWeights(input_layer_size, hidden_layer_size);
-initial_Theta2 = randInitializeWeights(hidden_layer_size, num_labels);
-
-% Unroll parameters
-initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:)];
 
 
 %% =================== Part 4: Training NN ===================
@@ -72,7 +73,7 @@ fprintf('\nTraining Neural Network... \n')
 options = optimset('MaxIter', 100);
 
 %  You should also try different values of lambda
-lambda = 1;
+lambda = 0.5;
 
 % Create "short hand" for the cost function to be minimized
 costFunction = @(p) nnCostFunction(p, ...
@@ -115,17 +116,17 @@ fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
 testpred = predict(Theta1, Theta2, testX);
 fprintf('\nTest Set Identification: %d / %d\n', sum(double(testpred==testy)), size(testy,1));
 wrongs = find(double(testpred~=testy));
-falsepositives = wrongs(wrongs <= size(testX1,1))
-falsenegatives = wrongs(wrongs > size(testX1,1)) - size(testX1,1)
-csvwrite('hottiedata/output/falsepositives.csv',falsepositives)
-csvwrite('hottiedata/output/falsenegatives.csv',falsenegatives)
+falsepositives = wrongs(wrongs <= testm);
+falsenegatives = wrongs(wrongs > testm) .- testm;
+%falsenegatives = wrongs(wrongs > testm)
 trainingaccuracy = mean(double(testpred == testy)) * 100;
 fprintf('\nTesting Set Accuracy: %f\n', trainingaccuracy);
 
-if trainingaccuracy == 100
+if trainingaccuracy > threshold
 	save('hottiedata/input/learntweights.mat','Theta1','Theta2');
 end
-
+treatedpositive = sum(double(testpred==1))
+treatednegative = sum(double(testpred==2))
 % Displaying false positive files
 falsepositive_file = fopen('hottiedata/input/testminus.txt');
 number_of_lines = fskipl(falsepositive_file, Inf);
@@ -145,4 +146,7 @@ for i = 1:number_of_lines
     falsenegcells{i} = fscanf(falsenegative_file, '%s', 1);
 end
 falsenegativefile = falsenegcells(falsenegatives)
+
+csvwrite('hottiedata/output/falsepositives.csv',falsepositives)
+csvwrite('hottiedata/output/falsenegatives.csv',falsenegatives)
 

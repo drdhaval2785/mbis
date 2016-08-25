@@ -10,12 +10,7 @@ PIL - pip install pillow
 resizeimage - pip install python-resize-image
 
 # Folder structure
-hottiedata
-	input
-		Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
-	output
-		Place to store output data of false positives and false negatives on test data.
-Images
+Images (User has to put images)
 	ImagesDir
 		Here you will put your 'Good' images for training.
 	JunkDir
@@ -25,6 +20,11 @@ Images
 			Here you will put your 'Good' test images for testing the neural network on unseen images.
 		negatives
 			Here you will put your 'Bad' test images for testing the neural network on unseen images.
+hottiedata (Nothing to be done by user. Auto-generated)
+	input
+		Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
+	output
+		Place to store output data of false positives and false negatives on test data.
 
 # Steps
 1. Put your images in the Images folder as shown in the `Images` folder description. The description is self explanatory.
@@ -75,3 +75,5 @@ Images
 4. If the accuracy on test classification is 100% (or greater than some user defined threshold), the parameters are stored in hottiedata/input/learntparameters.mat.
 5. This way we can store the neural network we found OK, and then apply it to some other test cases too.
 
+# Acknowledgements
+1. Code of Coursera Machine learning course ex4 has been extensively used to create neural network on octave.
