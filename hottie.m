@@ -85,6 +85,10 @@ costFunction = @(p) nnCostFunction(p, ...
 % neural network parameters)
 [nn_params, cost] = fmincg(costFunction, initial_nn_params, options);
 
+% error on test set
+[costtest, scrap] = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, testX, testy, lambda);
+costtest
+
 % Obtain Theta1 and Theta2 back from nn_params
 Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
                  hidden_layer_size, (input_layer_size + 1));
