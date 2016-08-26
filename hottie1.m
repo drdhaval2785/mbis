@@ -3,10 +3,10 @@ clear ; close all; clc
 
 %% Setup the parameters you will use for this exercise
 input_layer_size  = 400;  % 20x20 Input Images of Digits
-hidden_layer_size = 50;   % 50 hidden units
+hidden_layer_size = 10;   % 50 hidden units
 num_labels = 2;          % 2 labels, from 1 to 2   
                           % (note that we have mapped "0" to label 2)
-threshold = 99; % Can be 95 / 99 for 95%, 99% respectively.
+threshold = 90; % Can be 95 / 99 for 95%, 99% respectively.
 
 %% =========== Part 1: Loading and Visualizing Data =============
 
@@ -21,20 +21,24 @@ X1 = csvread('hottiedata/input/falses.csv');
 X1 = rgbnormalize(X1);
 X = [X1;X2];
 y = [ones(size(X1,1),1).*2;ones(size(X2,1),1)];
-combo = [X y];
+z = (1:size(y))(:);
+combo = [X y z];
 combo = combo(randperm(size(combo,1)),:);
 m = size(combo,1);
 mtrain = (m * 6) / 10;
 mcv = (m * 8) / 10;
 Xtrain = combo(1:mtrain,1:input_layer_size);
 ytrain = combo(1:mtrain,input_layer_size+1);
+ztrain = combo(1:mtrain,input_layer_size+2);
 Xcv = combo(mtrain+1:mcv,1:input_layer_size);
 ycv = combo(mtrain+1:mcv,input_layer_size+1);
+zcv = combo(mtrain+1:mcv,input_layer_size+2);
 Xtest = combo(mcv+1:end,1:input_layer_size);
 ytest = combo(mcv+1:end,input_layer_size+1);
+ztest = combo(mcv+1:end,input_layer_size+2);
 lambda = 1;
 
-save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','m','mtrain','mcv','Xcv','ycv','Xtest','ytest');
+save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','ztrain','m','mtrain','mcv','Xcv','ycv','zcv','Xtest','ytest','ztest');
 fprintf('Program paused. Press enter to continue.\n');
 pause;
 
@@ -62,21 +66,22 @@ fprintf('\nTest Set Identification from previously learnt parameters: %d / %d\n'
 fprintf('\nTraining Neural Network... \n')
 
 % Set the maximum iterations
-options = optimset('MaxIter', 100);
+options = optimset('MaxIter', 10);
 
+costFunction = @(p) nnCostFunction(p, ...
+								   input_layer_size, ...
+								   hidden_layer_size, ...
+								   num_labels, Xtrain, ytrain, lambda);
+
+% Now, costFunction is a function that takes in only one argument (the
+% neural network parameters)
+[nn_params, cost] = fmincg(costFunction, initial_nn_params, options);
+#{
 %  You should also try different values of lambda
 if exist('hottiedata/input/normalized/learningcurve.mat')==2
 	% Create "short hand" for the cost function to be minimized
-	costFunction = @(p) nnCostFunction(p, ...
-									   input_layer_size, ...
-									   hidden_layer_size, ...
-									   num_labels, Xtrain, ytrain, lambda);
-
-	% Now, costFunction is a function that takes in only one argument (the
-	% neural network parameters)
-	[nn_params, cost] = fmincg(costFunction, initial_nn_params, options);
-	%load('hottiedata/input/normalized/learningcurve.mat');
-	%plot(1:mtrain,Costtrain,1:mtrain,Costcv);
+	load('hottiedata/input/normalized/learningcurve.mat');
+	plot(1:mtrain,Costtrain,1:mtrain,Costcv,1:mtrain,Costtest);
 	pause();
 else
 	for i = 1:mtrain,
@@ -93,10 +98,14 @@ else
 		% error on test set
 		[Costtrain(i), scraptrain] = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, Xtrain(1:i,:), ytrain(1:i,:), lambda);
 		[Costcv(i), scrapcv] = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, Xcv, ycv, lambda);
+		[Costtest(i), scrapcv] = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, num_labels, Xtest, ytest, lambda);
 		fprintf('m=%d, Costtrain=%d, Costcv=%d',i,Costtrain(i),Costcv(i));
 	end
-	save('hottiedata/input/normalized/learningcurve.mat','Costtrain','mtrain','Costcv');
+	save('hottiedata/input/normalized/learningcurve.mat','Costtrain','mtrain','Costcv','Costtest');
+	plot(1:mtrain,Costtrain,1:mtrain,Costcv,1:mtrain,Costtest);
+	pause();
 end
+#}
 
 #{
 % Validation Curve
@@ -151,9 +160,33 @@ fprintf('\nTraining Set Accuracy: %f\n', mean(double(Predtrain == ytrain)) * 100
 Predcv = predict(Theta1, Theta2, Xcv);
 fprintf('\nCross validation Set Identification: %d / %d\n', sum(double(Predcv==ycv)), size(ycv,1));
 
+#{
+for i = 1:length(Predcv)
+	fprintf('%d %d\n',Predcv(i),ycv(i));
+end
+#}
 Predtest = predict(Theta1, Theta2, Xtest);
 fprintf('\nTest Set Identification: %d / %d\n', sum(double(Predtest==ytest)), size(ytest,1));
-
-if mean(double(Predtest==ytest))*100 > threshold
-	save('hottiedata/input/learntweights.mat','Theta1','Theta2')
+% Displaying false positive files
+full_file = fopen('hottiedata/input/fullset.txt');
+number_of_lines = fskipl(full_file, Inf);
+frewind(full_file);
+falseposcells = cell(number_of_lines, 1);
+for i = 1:number_of_lines
+    fullcells{i} = fscanf(full_file, '%s', 1);
 end
+
+falsenegatives = ztest(Predtest==2 & ytest==1)
+falsenegativefile = fullcells(falsenegatives)
+
+falsepositives = ztest(Predtest==1 & ytest==2)
+falsepositivefile = fullcells(falsepositives)
+#{
+for i = 1:length(Predtest)
+	fprintf('%d %d\n',Predtest(i),ytest(i));
+end
+#}
+%if mean(double(Predtest==ytest))*100 > threshold
+%	save('hottiedata/input/learntweights.mat','Theta1','Theta2')
+%end
+

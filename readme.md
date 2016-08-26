@@ -15,11 +15,6 @@ Images (User has to put images)
 		Here you will put your 'Good' images for training.
 	JunkDir
 		Here you will put your 'Bad' images for training.
-	TestDir
-		positives
-			Here you will put your 'Good' test images for testing the neural network on unseen images.
-		negatives
-			Here you will put your 'Bad' test images for testing the neural network on unseen images.
 hottiedata (Nothing to be done by user. Auto-generated)
 	input
 		Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
@@ -33,7 +28,7 @@ hottiedata (Nothing to be done by user. Auto-generated)
 4. This will generate all the text files / CSV files in hottiedata folder. (Extracted images and put their crux data in CSV / txt).
 5. Step 1 to 3 are one time event. Unless you want to change images, you don't have to do this again.
 6. Open Octave CLI
-7. Write 'hottie' and press enter.
+7. Write 'hottie1' and press enter.
 8. Keep on pushing enter whenever asked.
 9. The console will show you the training / testing accuracy and also list of false positive / false negative files (places where the code failed).
 10. Examine the image and try to figure out the cause of error.
