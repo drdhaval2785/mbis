@@ -2,12 +2,12 @@
 clear ; close all; clc
 
 %% Setup the parameters you will use for this exercise
-input_layer_size  = 400;  % 10x10X4 Input Images of Digits
-hidden_layer_size = 100;   % 50 hidden units
+input_layer_size  = 400;  % 20x20X4 Input Images of Digits
+hidden_layer_size = 50;   % 50 hidden units
 num_labels = 2;          % 2 labels, from 1 to 2   
                           % (note that we have mapped "0" to label 2)
-threshold = 90; % Can be 95 / 99 for 95%, 99% respectively.
-lambda = 3;
+threshold = 80; % Can be 95 / 99 for 95%, 99% respectively.
+lambda = 1;
 
 %% =========== Part 1: Loading and Visualizing Data =============
 
@@ -28,24 +28,18 @@ combo = [X y z];
 combo = combo(randperm(size(combo,1)),:);
 m = size(combo,1);
 m
-mtrain = floor((m*6)/10);
-mcv = floor((m*8)/10);
+mtrain = floor((m*8)/10);
 Xtrain = combo(1:mtrain,1:input_layer_size);
 ytrain = combo(1:mtrain,input_layer_size+1);
 ztrain = combo(1:mtrain,input_layer_size+2);
-Xcv = combo(mtrain+1:mcv,1:input_layer_size);
-ycv = combo(mtrain+1:mcv,input_layer_size+1);
-zcv = combo(mtrain+1:mcv,input_layer_size+2);
-#{
-Xtest = combo(mcv+1:end,1:input_layer_size);
-ytest = combo(mcv+1:end,input_layer_size+1);
-ztest = combo(mcv+1:end,input_layer_size+2);
-#}
+Xcv = combo(mtrain+1:m,1:input_layer_size);
+ycv = combo(mtrain+1:m,input_layer_size+1);
+zcv = combo(mtrain+1:m,input_layer_size+2);
 % Right now trying from ToBeSorted folder.
 Xtest = csvread('hottiedata/input/tobesorted.csv');
 Xtest = rgbnormalize(Xtest);
 ytest = [ones(100,1);ones(100,1).*2];
-ztest = (1:size(ytest))(:);
+ztest = (1:size(Xtest,1))(:);
 testcombo = [Xtest ytest ztest];
 testcombo = testcombo(randperm(size(testcombo,1)),:);
 Xtest = testcombo(:,1:input_layer_size);
@@ -190,25 +184,32 @@ for i = 1:length(Predtest)
 end
 #}
 % Displaying false positive files
-%full_file = fopen('hottiedata/input/fullset.txt');
 full_file = fopen('hottiedata/input/tosort.txt');
 number_of_lines = fskipl(full_file, Inf);
 frewind(full_file);
-falseposcells = cell(number_of_lines, 1);
 for i = 1:number_of_lines
     fullcells{i} = fscanf(full_file, '%s', 1);
 end
+
+predpositives = ztest(Predtest==1);
+predpositivefile = fullcells(predpositives);
+celltocsv(predpositivefile,'hottiedata/output/positive.txt');
+prednegatives = ztest(Predtest==2);
+prednegativefile = fullcells(prednegatives);
+celltocsv(prednegativefile,'hottiedata/output/negative.txt');
 
 falsenegatives = ztest(Predtest==2 & ytest==1);
 falsenegativefile = fullcells(falsenegatives)
 
 falsepositives = ztest(Predtest==1 & ytest==2);
 falsepositivefile = fullcells(falsepositives)
+
 #{
 for i = 1:length(Predtest)
 	fprintf('%d %d\n',Predtest(i),ytest(i));
 end
 #}
+
 if mean(double(Predtest==ytest))*100 > threshold
 	save('hottiedata/input/learntweights.mat','Theta1','Theta2')
 end
