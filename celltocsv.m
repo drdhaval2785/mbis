@@ -1,5 +1,5 @@
 function celltocsv (cellarray, csvfilename)
-	fid=fopen(csvfilename,'wt');
+	fid=fopen(csvfilename,'w');
 	x=cellarray;
 	[rows,cols]=size(x);
 	for i=1:rows
