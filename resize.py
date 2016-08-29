@@ -29,10 +29,13 @@ def resize_file(in_file, out_file, size, filenamefile):
 
 if __name__=="__main__":
     inputfolder = sys.argv[1]
+    print "Reading the filenames from", inputfolder
     filenames = findfilenames(inputfolder)
     counter = 1
+    print "Resizing and putting data into csv file."
     for member in filenames:
-        print counter, member
+        if counter % 25 == 0:
+            print counter, '...'
         counter += 1
         fin = inputfolder+'/'+member
         fout = 'hottiedata/input/'+sys.argv[2]
