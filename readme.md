@@ -6,11 +6,15 @@ To train a neural network to segregate good images and bad images.
 2. octave 4.0.3 - https://www.gnu.org/software/octave/download.html
 3. [git bash](https://git-scm.com/downloads) / any unix / mac system (To run shell files)
 
-# Python libraries used
+# Setup (One time event)
+0. `cd path/to/this/folder'
+1. `sh setup.sh`. - This is a one time event. This will install python packages needed for functioning and make folder structure.
+
+# Python libraries used (Done via setup.sh)
 1. PIL - pip install pillow
 2. resizeimage - pip install python-resize-image
 
-# Folder structure
+# Folder structure (Done via setup.sh)
 1. Images (User has to put images)
 * ImagesDir - Here you will put your 'Good' images for training.
 * JunkDir - Here you will put your 'Bad' images for training.
@@ -18,10 +22,6 @@ To train a neural network to segregate good images and bad images.
 2. hottiedata (Nothing to be done by user. Auto-generated)
 * input - Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
 * output - Place to store output data of false positives and false negatives on test data.
-
-# Setup (One time event)
-0. `cd path/to/this/folder'
-1. `sh setup.sh`. - This is a one time event. This will install python packages needed for functioning and make folder structure.
 
 # Steps for usage
 1. `cd path/to/this/folder'
