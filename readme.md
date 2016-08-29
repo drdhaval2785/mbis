@@ -11,18 +11,12 @@ To train a neural network to segregate good images and bad images.
 
 # Folder structure
 1. Images (User has to put images)
-
-ImagesDir - Here you will put your 'Good' images for training.
-
-JunkDir - Here you will put your 'Bad' images for training.
-
-ToBeSorted - Here you will put your new images - to be classified.
-
+1.1. ImagesDir - Here you will put your 'Good' images for training.
+1.2. JunkDir - Here you will put your 'Bad' images for training.
+1.3. ToBeSorted - Here you will put your new images - to be classified.
 2. hottiedata (Nothing to be done by user. Auto-generated)
-
-input - Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
-
-output - Place to store output data of false positives and false negatives on test data.
+2.1. input - Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
+2.2. output - Place to store output data of false positives and false negatives on test data.
 
 # Steps
 1. Put your images in the Images folder as shown in the `Images` folder description. The description is self explanatory.
