@@ -6,47 +6,54 @@ input_layer_size  = 400;  % 20x20X4 Input Images of Digits
 hidden_layer_size = 50;   % 50 hidden units
 num_labels = 2;          % 2 labels, from 1 to 2   
                           % (note that we have mapped "0" to label 2)
-threshold = 80; % Can be 95 / 99 for 95%, 99% respectively.
-lambda = 1;
+threshold = 80; % Can be 95 / 99 for 95%, 99% respectively. Right now kept at 80%. If the test set accuracy is above threshold, the parameters are stored in hottiedata/input/learntparameters.mat.
+lambda = 1; % Regularization parameter.
 
 %% =========== Part 1: Loading and Visualizing Data =============
 
 % Load Training Data
-fprintf('Loading and Normalizing Data ...\n')
+fprintf('Loading and Normalizing Training Data ...\n')
 
-%Normalize raining data
-fprintf('Normalizing the training data and storing in hottiedata/input/normalized/traindata.mat\n');
-X2 = csvread('hottiedata/input/trues.csv');
-X1 = csvread('hottiedata/input/falses.csv');
-X = [X1;X2];
-X =rgbnormalize(X);
-Xflip = fliplr(X);
-X = [X;Xflip];
-y = [ones(size(X1,1),1).*2;ones(size(X2,1),1);ones(size(X1,1),1).*2;ones(size(X2,1),1)];
-z = (1:size(y))(:);
-combo = [X y z];
-combo = combo(randperm(size(combo,1)),:);
-m = size(combo,1);
-m
-mtrain = floor((m*8)/10);
-Xtrain = combo(1:mtrain,1:input_layer_size);
-ytrain = combo(1:mtrain,input_layer_size+1);
-ztrain = combo(1:mtrain,input_layer_size+2);
-Xcv = combo(mtrain+1:m,1:input_layer_size);
-ycv = combo(mtrain+1:m,input_layer_size+1);
-zcv = combo(mtrain+1:m,input_layer_size+2);
-% Right now trying from ToBeSorted folder.
-Xtest = csvread('hottiedata/input/tobesorted.csv');
-Xtest = rgbnormalize(Xtest);
-ytest = [ones(100,1);ones(100,1).*2];
-ztest = (1:size(Xtest,1))(:);
-testcombo = [Xtest ytest ztest];
-testcombo = testcombo(randperm(size(testcombo,1)),:);
-Xtest = testcombo(:,1:input_layer_size);
-ytest = testcombo(:,input_layer_size+1);
-ztest = testcombo(:,input_layer_size+2);
+% If there is a previously normalized data available, load from there.
+if exist('hottiedata/input/normalized/traindata.mat') == 2,
+	load('hottiedata/input/normalized/traindata.mat');
+% Otherwise normalize the data and store it is the traindata.mat file.
+else
+	%Normalize raining data
+	fprintf('Normalizing the training data and storing in hottiedata/input/normalized/traindata.mat\n');
+	% Read the CSV files of pixels into matrices.
+	X2 = csvread('hottiedata/input/trues.csv');
+	X1 = csvread('hottiedata/input/falses.csv');
+	X = [X1;X2];
+	X =rgbnormalize(X);
+	Xflip = fliplr(X);
+	X = [X;Xflip];
+	y = [ones(size(X1,1),1).*2;ones(size(X2,1),1);ones(size(X1,1),1).*2;ones(size(X2,1),1)];
+	z = (1:size(y))(:);
+	combo = [X y z];
+	combo = combo(randperm(size(combo,1)),:);
+	m = size(combo,1);
+	m
+	mtrain = floor((m*8)/10);
+	Xtrain = combo(1:mtrain,1:input_layer_size);
+	ytrain = combo(1:mtrain,input_layer_size+1);
+	ztrain = combo(1:mtrain,input_layer_size+2);
+	Xcv = combo(mtrain+1:m,1:input_layer_size);
+	ycv = combo(mtrain+1:m,input_layer_size+1);
+	zcv = combo(mtrain+1:m,input_layer_size+2);
+	% Right now trying from ToBeSorted folder.
+	Xtest = csvread('hottiedata/input/tobesorted.csv');
+	Xtest = rgbnormalize(Xtest);
+	ytest = [ones(100,1);ones(100,1).*2];
+	ztest = (1:size(Xtest,1))(:);
+	testcombo = [Xtest ytest ztest];
+	testcombo = testcombo(randperm(size(testcombo,1)),:);
+	Xtest = testcombo(:,1:input_layer_size);
+	ytest = testcombo(:,input_layer_size+1);
+	ztest = testcombo(:,input_layer_size+2);
+	save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','ztrain','m','mtrain','Xcv','ycv','zcv','Xtest','ytest','ztest');
+end
 
-%save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','ztrain','m','mtrain','mcv','Xcv','ycv','zcv','Xtest','ytest','ztest');
 
 %% ================ Part 2: Loading Parameters ================
 
@@ -200,15 +207,12 @@ celltocsv(prednegativefile,'hottiedata/output/negative.txt');
 
 falsenegatives = ztest(Predtest==2 & ytest==1);
 falsenegativefile = fullcells(falsenegatives)
+celltocsv(falsenagativefile,'hottiedata/output/falsenegative.txt');
 
 falsepositives = ztest(Predtest==1 & ytest==2);
 falsepositivefile = fullcells(falsepositives)
+celltocsv(falsenagativefile,'hottiedata/output/falsepositive.txt');
 
-#{
-for i = 1:length(Predtest)
-	fprintf('%d %d\n',Predtest(i),ytest(i));
-end
-#}
 
 if mean(double(Predtest==ytest))*100 > threshold
 	save('hottiedata/input/learntweights.mat','Theta1','Theta2')

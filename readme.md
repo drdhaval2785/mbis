@@ -21,7 +21,7 @@ To train a neural network to segregate good images and bad images.
 # Steps
 1. Put your images in the Images folder as shown in the `Images` folder description. The description is self explanatory.
 2. `cd path/to/this/folder'
-3. Run `sh runcode.sh` from commandline.
+3. Run `sh preprocess.sh` from commandline.
 4. This will generate all the text files / CSV files in hottiedata folder. (Extracted images and put their crux data in CSV / txt).
 5. Step 1 to 3 are one time event. Unless you want to change images, you don't have to do this again.
 6. Open Octave CLI.
