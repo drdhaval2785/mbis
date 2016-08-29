@@ -23,3 +23,11 @@ echo "Resize the images in Images/TestDir/negatives directory and store in hotti
 python resize.py Images/TestDir/negatives testnegatives.csv testminus.txt
 echo "Resize the images in Images/ToBeSorted directory and store in hottiedata/input/tobesorted.csv..."
 python resize.py Images/ToBeSorted tobesorted.csv tosort.txt
+
+echo "Finished preprocessing"
+echo "Next steps are -"
+echo "1. Open Octave CLI"
+echo "2. `cd` to the path of code in octave CLI"
+echo "3. type `hottie1` and press enter"
+echo "4. run `sh postprocess.sh`"
+echo "5. Check the folders Images/Sorted/positives and Images/Sorted/negatives for output."

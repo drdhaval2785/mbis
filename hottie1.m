@@ -254,3 +254,6 @@ if mean(double(Predcv==ycv))*100 > threshold
 	save('hottiedata/input/learntweights.mat','Theta1','Theta2')
 end
 
+fprintf("Next steps are -");
+fprintf("1. run sh postprocess.sh");
+fprintf("2. Check the folders Images/Sorted/positives and Images/Sorted/negatives for output.");
