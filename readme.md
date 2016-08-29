@@ -2,27 +2,27 @@
 To train a neural network to segregate good images and bad images.
 
 # Programs used
-python >= 2.7.9 https://www.python.org/downloads/
-octave 4.0.3 - https://www.gnu.org/software/octave/download.html
+1. python >= 2.7.9 https://www.python.org/downloads/
+2. octave 4.0.3 - https://www.gnu.org/software/octave/download.html
 
 # Python libraries used
-PIL - pip install pillow
-resizeimage - pip install python-resize-image
+1. PIL - pip install pillow
+2. resizeimage - pip install python-resize-image
 
 # Folder structure
 1. Images (User has to put images)
 
-1.1 ImagesDir - Here you will put your 'Good' images for training.
+ImagesDir - Here you will put your 'Good' images for training.
 
-1.2 JunkDir - Here you will put your 'Bad' images for training.
+JunkDir - Here you will put your 'Bad' images for training.
 
-1.3 ToBeSorted - Here you will put your new images - to be classified.
+ToBeSorted - Here you will put your new images - to be classified.
 
 2. hottiedata (Nothing to be done by user. Auto-generated)
 
-2.1 input - Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
+input - Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
 
-2.2 output - Place to store output data of false positives and false negatives on test data.
+output - Place to store output data of false positives and false negatives on test data.
 
 # Steps
 1. Put your images in the Images folder as shown in the `Images` folder description. The description is self explanatory.
