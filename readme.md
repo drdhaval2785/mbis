@@ -4,6 +4,7 @@ To train a neural network to segregate good images and bad images.
 # Programs used
 1. python >= 2.7.9 https://www.python.org/downloads/
 2. octave 4.0.3 - https://www.gnu.org/software/octave/download.html
+3. [git bash](https://git-scm.com/downloads) / any unix / mac system (To run shell files)
 
 # Python libraries used
 1. PIL - pip install pillow
@@ -11,25 +12,34 @@ To train a neural network to segregate good images and bad images.
 
 # Folder structure
 1. Images (User has to put images)
-1.1. ImagesDir - Here you will put your 'Good' images for training.
-1.2. JunkDir - Here you will put your 'Bad' images for training.
-1.3. ToBeSorted - Here you will put your new images - to be classified.
+* ImagesDir - Here you will put your 'Good' images for training.
+* JunkDir - Here you will put your 'Bad' images for training.
+* ToBeSorted - Here you will put your new images - to be classified.
 2. hottiedata (Nothing to be done by user. Auto-generated)
-2.1. input - Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
-2.2. output - Place to store output data of false positives and false negatives on test data.
+* input - Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
+* output - Place to store output data of false positives and false negatives on test data.
 
-# Steps
-1. Put your images in the Images folder as shown in the `Images` folder description. The description is self explanatory.
-2. `cd path/to/this/folder'
+# Setup (One time event)
+0. `cd path/to/this/folder'
+1. `sh setup.sh`. - This is a one time event. This will install python packages needed for functioning and make folder structure.
+
+# Steps for usage
+1. `cd path/to/this/folder'
+2. Put your images in the Images folder as shown in the `Images` folder description. The description is self explanatory.
 3. Run `sh preprocess.sh` from commandline.
 4. This will generate all the text files / CSV files in hottiedata folder. (Extracted images and put their crux data in CSV / txt).
 5. Step 1 to 3 are one time event. Unless you want to change images, you don't have to do this again.
 6. Open Octave CLI.
-7. Write 'hottie1' and press enter.
-8. Keep on pushing enter whenever asked.
-9. The console will show you the training / testing accuracy and also list of false positive / false negative files (places where the code failed).
-10. Examine the image and try to figure out the cause of error.
-11. run `sh postprocess.sh` from commandline. This will segregate the good and bad images from Images/ToBeSorted folder into Images/sorted/positives and Images/sorted/negatives folders.
+7. write `cd path/to/this/folder' and click enter
+8. Write 'hottie1' and press enter.
+9. Keep on pushing enter whenever asked.
+10. The console will show you the training / testing accuracy and also list of false positive / false negative files (places where the code failed).
+11. Examine the image and try to figure out the cause of error.
+12. run `sh postprocess.sh` from commandline. This will segregate the good and bad images from Images/ToBeSorted folder into Images/sorted/positives and Images/sorted/negatives folders.
+13. Check the Images/sorted/positives and Images/sorted/negatives for segregated images.
+
+# Developer notes
+The next sections are for developer notes. Ignore if you are a user.
 
 # Preprocessing
 1. `resize.py` does the preprocessing.
@@ -65,7 +75,7 @@ To train a neural network to segregate good images and bad images.
 1. We train the neural network with the training data.
 2. We display training classification accuracy.
 3. We display test classification accuracy.
-4. If the accuracy on test classification is 100% (or greater than some user defined threshold), the parameters are stored in hottiedata/input/learntparameters.mat.
+4. If the accuracy on test classification is 80% (or greater than some user defined threshold), the parameters are stored in hottiedata/input/learntparameters.mat.
 5. This way we can store the neural network we found OK, and then apply it to some other test cases too.
 
 # Acknowledgements

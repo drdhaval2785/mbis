@@ -14,7 +14,6 @@ mkdir Images/Sorted/positives
 mkdir Images/Sorted/negatives
 python resize.py Images/ImagesDir trues.csv trueset.txt
 python resize.py Images/JunkDir falses.csv falseset.txt
-cat hottiedata/input/falseset.txt hottiedata/input/trueset.txt > hottiedata/input/fullset.txt
 python resize.py Images/TestDir/positives testpositives.csv testplus.txt
 python resize.py Images/TestDir/negatives testnegatives.csv testminus.txt
 python resize.py Images/ToBeSorted tobesorted.csv tosort.txt
