@@ -58,13 +58,11 @@ else
 	% Later on it will be only Xtest. There would not be any ytest associated with it.
 	Xtest = csvread('hottiedata/input/tobesorted.csv');
 	Xtest = rgbnormalize(Xtest);
-	%ytest = [ones(100,1);ones(100,1).*2];
 	ztest = (1:size(Xtest,1))(:);
-	testcombo = [Xtest ytest ztest];
+	testcombo = [Xtest ztest];
 	testcombo = testcombo(randperm(size(testcombo,1)),:);
 	Xtest = testcombo(:,1:input_layer_size);
-	%ytest = testcombo(:,input_layer_size+1);
-	ztest = testcombo(:,input_layer_size+2);
+	ztest = testcombo(:,input_layer_size+1);
 	% Save into traindata.mat, for future use if any.
 	%save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','ztrain','m','mtrain','Xcv','ycv','zcv','Xtest','ytest','ztest');
 	save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','ztrain','m','mtrain','Xcv','ycv','zcv','Xtest','ztest');
@@ -95,7 +93,7 @@ fprintf('\nCross Validation Set Identification from previously learnt parameters
 
 
 %% =================== Part 4: Training NN ===================
-fprintf('\nTraining Neural Network... \n')
+fprintf('Training Neural Network... \n')
 
 % Set the maximum iterations
 options = optimset('MaxIter', 100);
@@ -202,13 +200,13 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
 
 % Predict training accuracy	
 Predtrain = predict(Theta1, Theta2, Xtrain);
-fprintf('\nTraining Set Identification: %d / %d\n', sum(double(Predtrain==ytrain)), size(ytrain,1));
-fprintf('\nTraining Set Accuracy: %f\n', mean(double(Predtrain == ytrain)) * 100);
+fprintf('Training Set Identification: %d / %d\n', sum(double(Predtrain==ytrain)), size(ytrain,1));
+fprintf('Training Set Accuracy: %f\n\n', mean(double(Predtrain == ytrain)) * 100);
 
 % Predict cross validation set accuracy.
 Predcv = predict(Theta1, Theta2, Xcv);
-fprintf('\nCross validation Set Identification: %d / %d\n', sum(double(Predcv==ycv)), size(ycv,1));
-fprintf('\nCross Validation Set Accuracy: %f\n', mean(double(Predcv == ycv)) * 100);
+fprintf('Cross validation Set Identification: %d / %d\n', sum(double(Predcv==ycv)), size(ycv,1));
+fprintf('Cross Validation Set Accuracy: %f\n', mean(double(Predcv == ycv)) * 100);
 
 % The above two predictions are used to identify whether the NN works as per our requirements or not.
 
@@ -225,6 +223,7 @@ for i = 1:number_of_lines
 end
 
 % Find indices of the items predicted to be positive by Neural network.
+fprintf("\nApplying neural network to Images/ToBeSorted and storing predicted positive files into hottiedata/output/positive.txt\n\n");
 predpositives = ztest(Predtest==1);
 % Get the name of file of predicted positive files.
 predpositivefile = fullcells(predpositives);
@@ -232,6 +231,7 @@ predpositivefile = fullcells(predpositives);
 celltocsv(predpositivefile,'hottiedata/output/positive.txt');
 
 % Same three steps for items predicted to be negative by Neural network.
+fprintf("Applying neural network to Images/ToBeSorted and storing predicted negative files into hottiedata/output/negative.txt\n\n");
 prednegatives = ztest(Predtest==2);
 prednegativefile = fullcells(prednegatives);
 celltocsv(prednegativefile,'hottiedata/output/negative.txt');
@@ -254,6 +254,6 @@ if mean(double(Predcv==ycv))*100 > threshold
 	save('hottiedata/input/learntweights.mat','Theta1','Theta2')
 end
 
-fprintf("Next steps are -");
-fprintf("1. run sh postprocess.sh");
-fprintf("2. Check the folders Images/Sorted/positives and Images/Sorted/negatives for output.");
+fprintf("Next steps are -\n");
+fprintf("1. run sh postprocess.sh\n");
+fprintf("2. Check the folders Images/Sorted/positives and Images/Sorted/negatives for output.\n");
