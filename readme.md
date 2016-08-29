@@ -10,15 +10,17 @@ PIL - pip install pillow
 resizeimage - pip install python-resize-image
 
 # Folder structure
-Images (User has to put images)
-	ImagesDir
+1. Images (User has to put images)
+	1.1 ImagesDir
 		Here you will put your 'Good' images for training.
-	JunkDir
+	1.2 JunkDir
 		Here you will put your 'Bad' images for training.
-hottiedata (Nothing to be done by user. Auto-generated)
-	input
+	1.3 ToBeSorted
+		Here you will put your new images - to be classified.
+2. hottiedata (Nothing to be done by user. Auto-generated)
+	2.1 input
 		Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
-	output
+	2.2 output
 		Place to store output data of false positives and false negatives on test data.
 
 # Steps
@@ -32,6 +34,7 @@ hottiedata (Nothing to be done by user. Auto-generated)
 8. Keep on pushing enter whenever asked.
 9. The console will show you the training / testing accuracy and also list of false positive / false negative files (places where the code failed).
 10. Examine the image and try to figure out the cause of error.
+11. run `sh postprocess.sh` from commandline. This will segregate the good and bad images from Images/ToBeSorted folder into Images/sorted/positives and Images/sorted/negatives folders.
 
 # Preprocessing
 1. `resize.py` does the preprocessing.
