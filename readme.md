@@ -11,17 +11,12 @@ resizeimage - pip install python-resize-image
 
 # Folder structure
 1. Images (User has to put images)
-	1.1 ImagesDir
-		Here you will put your 'Good' images for training.
-	1.2 JunkDir
-		Here you will put your 'Bad' images for training.
-	1.3 ToBeSorted
-		Here you will put your new images - to be classified.
+1.1 ImagesDir - Here you will put your 'Good' images for training.
+1.2 JunkDir - Here you will put your 'Bad' images for training.
+1.3 ToBeSorted - Here you will put your new images - to be classified.
 2. hottiedata (Nothing to be done by user. Auto-generated)
-	2.1 input
-		Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)
-	2.2 output
-		Place to store output data of false positives and false negatives on test data.
+2.1 input - Place to store train / test data in CSV / txt format. (Nothing to be done by the user. Automatically generated.)2
+.2 output - Place to store output data of false positives and false negatives on test data.
 
 # Steps
 1. Put your images in the Images folder as shown in the `Images` folder description. The description is self explanatory.
@@ -29,7 +24,7 @@ resizeimage - pip install python-resize-image
 3. Run `sh runcode.sh` from commandline.
 4. This will generate all the text files / CSV files in hottiedata folder. (Extracted images and put their crux data in CSV / txt).
 5. Step 1 to 3 are one time event. Unless you want to change images, you don't have to do this again.
-6. Open Octave CLI
+6. Open Octave CLI.
 7. Write 'hottie1' and press enter.
 8. Keep on pushing enter whenever asked.
 9. The console will show you the training / testing accuracy and also list of false positive / false negative files (places where the code failed).
