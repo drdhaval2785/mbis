@@ -4,6 +4,7 @@ mkdir hottiedata
 mkdir hottiedata/input
 mkdir hottiedata/input/normalized
 mkdir hottiedata/output
+mkdir Images
 mkdir Images/ImagesDir
 mkdir Images/JunkDir
 mkdir Images/TestDir
