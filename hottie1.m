@@ -2,12 +2,12 @@
 clear ; close all; clc
 
 %% Setup the parameters you will use for this exercise
-input_layer_size  = 400;  % 20x20X4 Input Images of Digits
+input_layer_size  = 1600;  % 20x20X4 Input Images of Digits
 hidden_layer_size = 50;   % 50 hidden units
 num_labels = 2;          % 2 labels, from 1 to 2   
                           % (note that we have mapped "0" to label 2)
-threshold = 80; % Can be 95 / 99 for 95%, 99% respectively. Right now kept at 80%. If the test set accuracy is above threshold, the parameters are stored in hottiedata/input/learntparameters.mat.
-lambda = 1; % Regularization parameter.
+threshold = 85; % Can be 95 / 99 for 95%, 99% respectively. Right now kept at 80%. If the test set accuracy is above threshold, the parameters are stored in hottiedata/input/learntparameters.mat.
+lambda = 0.3; % Regularization parameter.
 
 %% =========== Part 1: Loading and Visualizing Data =============
 
@@ -15,10 +15,12 @@ lambda = 1; % Regularization parameter.
 fprintf('Loading and Normalizing Training Data ...\n')
 
 % If there is a previously normalized data available, load from there.
+#{
 if exist('hottiedata/input/normalized/traindata.mat') == 2,
 	load('hottiedata/input/normalized/traindata.mat');
 % Otherwise normalize the data and store it is the traindata.mat file.
 else
+#}
 	%Normalize raining data
 	fprintf('Normalizing the training data and storing in hottiedata/input/normalized/traindata.mat\n');
 	% Read the CSV files of pixels into matrices.
@@ -64,9 +66,8 @@ else
 	Xtest = testcombo(:,1:input_layer_size);
 	ztest = testcombo(:,input_layer_size+1);
 	% Save into traindata.mat, for future use if any.
-	%save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','ztrain','m','mtrain','Xcv','ycv','zcv','Xtest','ytest','ztest');
-	save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','ztrain','m','mtrain','Xcv','ycv','zcv','Xtest','ztest');
-end
+	%save('hottiedata/input/normalized/traindata.mat','Xtrain','ytrain','ztrain','m','mtrain','Xcv','ycv','zcv','Xtest','ztest');
+%end
 
 
 %% ================ Part 2: Loading Parameters ================
@@ -119,7 +120,7 @@ if exist('hottiedata/input/normalized/learningcurve.mat')==2
 	pause();
 else
 	for i = 1:floor(mtrain/10),
-		i = i*10; % If the training data is large, it is too long to make iterations with every item. So taking iteration only at 10 intervals.
+		i = i*50; % If the training data is large, it is too long to make iterations with every item. So taking iteration only at 10 intervals.
 		% Take first i observations for training and get the Cross validation errors for it.
 		costFunction = @(p) nnCostFunction(p, ...
 										   input_layer_size, ...
